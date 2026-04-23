@@ -30,17 +30,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-base_path = "models"
 
+# ================================
+# LOAD MODELS
+# ================================
 # ================================
 # LOAD MODELS
 # ================================
 @st.cache_resource
 def load_models():
-    model = pickle.load(open(os.path.join(base_path, "failure_model.pkl"), "rb"))
-    encoders = pickle.load(open(os.path.join(base_path, "encoders.pkl"), "rb"))
+    model = pickle.load(open("failure_model.pkl", "rb"))
+    encoders = pickle.load(open("encoders.pkl", "rb"))
     try:
-        rul_model = pickle.load(open(os.path.join(base_path, "rul_model.pkl"), "rb"))
+        rul_model = pickle.load(open("rul_model.pkl", "rb"))
     except:
         rul_model = None
     return model, encoders, rul_model
@@ -206,6 +208,7 @@ if st.button("Predict"):
     # OUTPUT
     st.markdown(f"### Risk: **{risk}**")
     st.markdown(f"### Failure Mode: **{failure_mode}**")
+    st.markdown(f"### Remaining Useful Life: **{rul} days**")
 
 st.markdown("---")
 # ================================
