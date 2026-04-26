@@ -137,7 +137,7 @@ with col3:
         '>
     """, unsafe_allow_html=True)
 
-    st.image("logo_digitide.jpg", width=160)   # ✅ FIXED
+    st.image("logo_digitide.jpg", width=140)   # ✅ FIXED
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
