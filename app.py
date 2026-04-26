@@ -6,16 +6,25 @@ import os
 import plotly.graph_objects as go
 
 st.set_page_config(page_title="Mining AI Predictive Maintenance", layout="wide")
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 1rem;
+}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
 .header-box {
     background: linear-gradient(90deg, #003366, #0059b3);
-    padding: 15px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 10px;
-    text-align: center;
     color: white;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: bold;
 }
 
@@ -94,9 +103,45 @@ def risk_label(x):
 # ================================
 # UI
 # ================================
-st.markdown('<div class="header-box">Mining Predictive Maintenance AI System</div>', unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+# ================================
+# LOGO HEADER (UPDATED)
+# ================================
+col1, col2, col3 = st.columns([1.2,2,1.2])
+
+with col1:
+    st.markdown("""
+    <div style='
+        background:#e6f2ff;
+        padding:5px 10px;
+        border-radius:10px;
+        display:inline-block;
+    '>
+    """, unsafe_allow_html=True)
+
+    st.image("logo_PLUSE.QPredict.png", width=160)   # ✅ FIXED
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown('<div class="header-box">Mining Predictive Maintenance AI System</div>', unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+    <div style='display:flex; justify-content:flex-end;'>
+        <div style='
+            background:#e6f2ff;
+            padding:5px 10px;
+            border-radius:10px;
+            display:inline-block;
+        '>
+    """, unsafe_allow_html=True)
+
+    st.image("logo_digitide.jpg", width=140)   # ✅ FIXED
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top:-15px;'></div>", unsafe_allow_html=True)
 
 # ================================
 # SINGLE PREDICTION
@@ -164,7 +209,6 @@ with col5:
 # ================================
 # PREDICT
 # ================================
-st.markdown("---")
 
 st.markdown("""
 <style>
@@ -183,114 +227,102 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-if st.button("Run Failure Risk Assessment"):
-
-
-    # ✅ Now create dataframe
-    df = pd.DataFrame([{
-        "Asset_Type": asset_type,
-        "Mine_Site": mine_site,
-        "Asset_Age": asset_age,
-        "Operator_Experience": operator_exp,
-        "Health_Index": 0.7,
-        "Temperature": temperature,
-        "Vibration": vibration,
-        "Pressure": pressure,
-        "Load_Percentage": load,
-        "Runtime_Hours": runtime,
-        "Ambient_Temperature": ambient_temp,
-        "Dust_Index": dust_index,
-        "Humidity": humidity,
-        "Shift": shift,
-        "Maintenance_Flag": maintenance,
-        "Overdue_Maintenance": overdue,
-        "Sandstorm_Flag": sandstorm,
-        "Extreme_Heat_Flag": extreme_heat,
-        "Heavy_Rain_Flag": heavy_rain,
-        "Seismic_Flag": 0,
-        "Operator_Error_Flag": operator_error,
-        "Fatigue_Level": fatigue,
-        "Workforce_Availability": workforce,
-        "Safety_Incident_Flag": safety
-    }])
-
-    df = encode_data(df)
-    df = add_missing_features(df)
-    df_model = align_features(df)
-
-    prob = model.predict_proba(df_model)[0][1]
-    risk = risk_label(prob)
-    breakdown = 1 if prob > 0.5 else 0
-    failure_mode = get_failure_mode(df.iloc[0])
-
-    rul = int(rul_model.predict(df_model)[0]) if rul_model else "N/A"
-
-    # ================================
-    # GAUGE (UPDATED)
-    # ================================
-    fig = go.Figure(go.Indicator(
-    mode="gauge+number",
-    value=prob*100,
-    title={'text': "Failure Probability (%)"},
-    gauge={
-        'axis': {'range': [0, 100]},
-        'bar': {'color': "#003366"},
-        'steps': [
-            {'range': [0, 40], 'color': '#d6eaf8'},
-            {'range': [40, 70], 'color': '#aed6f1'},
-            {'range': [70, 100], 'color': '#5dade2'}
-        ],
-    }
-))
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    # OUTPUT
-    st.markdown(f"### Risk: **{risk}**")
-    st.markdown(f"### Failure Mode: **{failure_mode}**")
-    st.markdown(f"### Remaining Useful Life: **{rul} days**")
-
 st.markdown("---")
+
 # ================================
-# BATCH PREDICTION (FIXED ONLY THIS PART)
+# RESULTS + BATCH SIDE BY SIDE
 # ================================
-st.markdown('<div class="subheader-box">Batch Prediction & Bulk Asset Analysis</div>', unsafe_allow_html=True)
+col_left, col_right = st.columns([1,1])
 
-file = st.file_uploader("Upload CSV", type=["csv"])
+# ---------------- LEFT (RESULTS) ----------------
+with col_left:
 
-if file:
-    df = pd.read_csv(file)
-    df_input = df.copy()
+    if st.button("Run Failure Risk Assessment"):
 
-    # Preprocessing
-    df = encode_data(df)
-    df = add_missing_features(df)
-    df_model = align_features(df)
+        df = pd.DataFrame([{
+            "Asset_Type": asset_type,
+            "Mine_Site": mine_site,
+            "Asset_Age": asset_age,
+            "Operator_Experience": operator_exp,
+            "Health_Index": 0.7,
+            "Temperature": temperature,
+            "Vibration": vibration,
+            "Pressure": pressure,
+            "Load_Percentage": load,
+            "Runtime_Hours": runtime,
+            "Ambient_Temperature": ambient_temp,
+            "Dust_Index": dust_index,
+            "Humidity": humidity,
+            "Shift": shift,
+            "Maintenance_Flag": maintenance,
+            "Overdue_Maintenance": overdue,
+            "Sandstorm_Flag": sandstorm,
+            "Extreme_Heat_Flag": extreme_heat,
+            "Heavy_Rain_Flag": heavy_rain,
+            "Seismic_Flag": 0,
+            "Operator_Error_Flag": operator_error,
+            "Fatigue_Level": fatigue,
+            "Workforce_Availability": workforce,
+            "Safety_Incident_Flag": safety
+        }])
 
-    # 🔥 FIX STARTS HERE
-    probs = model.predict_proba(df_model)[:,1]
+        df = encode_data(df)
+        df = add_missing_features(df)
+        df_model = align_features(df)
 
-    df_input["Breakdown_Flag"] = (probs > 0.5).astype(int)
-    df_input["Risk"] = [risk_label(x) for x in probs]   # ✅ FIXED
-    df_input["Failure_Prob"] = probs
+        prob = model.predict_proba(df_model)[0][1]
+        risk = risk_label(prob)
+        failure_mode = get_failure_mode(df.iloc[0])
+        rul = int(rul_model.predict(df_model)[0]) if rul_model else "N/A"
 
-    if rul_model:
-        df_input["RUL"] = rul_model.predict(df_model)
+        fig = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=prob*100,
+            title={'text': "Failure Probability (%)"},
+            gauge={
+                'axis': {'range': [0, 100]},
+                'bar': {'color': "#003366"},
+                'steps': [
+                    {'range': [0, 40], 'color': '#d6eaf8'},
+                    {'range': [40, 70], 'color': '#aed6f1'},
+                    {'range': [70, 100], 'color': '#5dade2'}
+                ],
+            }
+        ))
 
-    df_input["Failure_Mode"] = df_input.apply(get_failure_mode, axis=1)
-    # 🔥 FIX ENDS HERE
+        st.plotly_chart(fig, use_container_width=True)
 
-    # ================================
-    # STYLING
-    # ================================
-    def highlight_cols(x):
-        color = 'background-color: #d6eaf8'
-        return [color if col in ["Breakdown_Flag","Risk","Failure_Mode","RUL","Failure_Prob"] else '' for col in x.index]
+        st.markdown(f"### Risk: **{risk}**")
+        st.markdown(f"### Failure Mode: **{failure_mode}**")
+        st.markdown(f"### Remaining Useful Life: **{rul} days**")
 
-    styled = df_input.style.apply(highlight_cols, axis=1).set_table_styles(
-        [{'selector': 'th', 'props': [('background-color', '#003366'), ('color', 'white')]}]
-    )
 
-    st.write(styled)
+# ---------------- RIGHT (BATCH) ----------------
+with col_right:
 
-    st.download_button("Download CSV", df_input.to_csv(index=False), "output.csv")
+    st.markdown("### Multi-Asset Risk Evaluation")
+
+    file = st.file_uploader("Upload CSV", type=["csv"])
+
+    if file:
+        df = pd.read_csv(file)
+        df_input = df.copy()
+
+        df = encode_data(df)
+        df = add_missing_features(df)
+        df_model = align_features(df)
+
+        probs = model.predict_proba(df_model)[:,1]
+
+        df_input["Breakdown_Flag"] = (probs > 0.5).astype(int)
+        df_input["Risk"] = [risk_label(x) for x in probs]
+        df_input["Failure_Prob"] = probs
+
+        if rul_model:
+            df_input["RUL"] = rul_model.predict(df_model)
+
+        df_input["Failure_Mode"] = df_input.apply(get_failure_mode, axis=1)
+
+        st.dataframe(df_input, use_container_width=True)
+
+        st.download_button("Download CSV", df_input.to_csv(index=False), "output.csv")
