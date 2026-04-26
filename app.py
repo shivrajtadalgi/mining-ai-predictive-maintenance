@@ -34,9 +34,6 @@ st.markdown("""
 # ================================
 # LOAD MODELS
 # ================================
-# ================================
-# LOAD MODELS
-# ================================
 @st.cache_resource
 def load_models():
     model = pickle.load(open("failure_model.pkl", "rb"))
@@ -99,6 +96,8 @@ def risk_label(x):
 # ================================
 st.markdown('<div class="header-box">Mining Predictive Maintenance AI System</div>', unsafe_allow_html=True)
 
+st.markdown("<br>", unsafe_allow_html=True)
+
 # ================================
 # SINGLE PREDICTION
 # ================================
@@ -129,24 +128,65 @@ with col3:
 
 st.subheader("Operational Conditions")
 
+def switch_card(title, desc, key):
+    col1, col2 = st.columns([4,2])
+
+    with col1:
+        st.markdown(f"**{title}**")
+        st.caption(desc)
+
+    with col2:
+        value = st.toggle("", key=key)
+        st.markdown(
+            f"<div style='text-align:center; font-weight:bold; color:#0e6efd;'>"
+            f"{'Yes' if value else 'No'}"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+
+    return 1 if value else 0
+
+
 col4, col5 = st.columns(2)
 
 with col4:
-    maintenance = st.selectbox("Maintenance",[0,1])
-    overdue = st.selectbox("Overdue",[0,1])
-    sandstorm = st.selectbox("Sandstorm",[0,1])
-    extreme_heat = st.selectbox("Extreme Heat",[0,1])
+    maintenance = switch_card("Maintenance Done", "Equipment maintenance completed", "maintenance")
+    overdue = switch_card("Overdue Maintenance", "Maintenance delay beyond schedule", "overdue")
+    sandstorm = switch_card("Sandstorm", "Extreme dusty weather condition", "sandstorm")
+    extreme_heat = switch_card("Extreme Heat", "High temperature environmental stress", "extreme_heat")
 
 with col5:
-    heavy_rain = st.selectbox("Heavy Rain",[0,1])
-    operator_error = st.selectbox("Operator Error",[0,1])
-    safety = st.selectbox("Safety",[0,1])
+    heavy_rain = switch_card("Heavy Rain", "High rainfall impacting operations", "heavy_rain")
+    operator_error = switch_card("Operator Error", "Manual operational mistake occurred", "operator_error")
+    safety = switch_card("Safety Incident", "Safety-related event recorded", "safety")
+
 
 # ================================
 # PREDICT
 # ================================
-if st.button("Predict"):
+st.markdown("---")
 
+st.markdown("""
+<style>
+div.stButton > button {
+    background-color: #003366;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: none;
+}
+div.stButton > button:hover {
+    background-color: #0059b3;
+}
+</style>
+""", unsafe_allow_html=True)
+
+if st.button("Run Failure Risk Assessment"):
+
+
+    # ✅ Now create dataframe
     df = pd.DataFrame([{
         "Asset_Type": asset_type,
         "Mine_Site": mine_site,
